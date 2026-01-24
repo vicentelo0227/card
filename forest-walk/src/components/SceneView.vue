@@ -22,7 +22,7 @@
         <!-- Video background with crossfade loop (if scene has video) -->
         <div 
           v-if="store.currentScene?.video"
-          class="absolute inset-0"
+          class="absolute inset-0 z-0"
         >
           <!-- Video A -->
           <video
@@ -30,7 +30,7 @@
             :src="store.currentScene.video"
             muted
             playsinline
-            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            class="absolute inset-0 w-full h-full object-cover video-crossfade"
             :class="{ 'opacity-0': !activeVideo.isA }"
             @timeupdate="onVideoTimeUpdate($event, 'A')"
             @loadeddata="onVideoALoaded"
@@ -41,7 +41,7 @@
             :src="store.currentScene.video"
             muted
             playsinline
-            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            class="absolute inset-0 w-full h-full object-cover video-crossfade"
             :class="{ 'opacity-0': !activeVideo.isB }"
             @timeupdate="onVideoTimeUpdate($event, 'B')"
           />
@@ -52,7 +52,7 @@
         <!-- Real image background (fallback if no video) -->
         <div 
           v-else-if="store.currentScene?.image"
-          class="absolute inset-0"
+          class="absolute inset-0 z-0"
         >
           <img 
             :src="store.currentScene.image"
@@ -79,12 +79,14 @@
           </div>
         </div>
 
-        <!-- Hotspots -->
-        <Hotspot 
-          v-for="hotspot in store.currentScene?.hotspots" 
-          :key="hotspot.id"
-          :hotspot="hotspot"
-        />
+        <!-- Hotspots container with z-index to ensure visibility above video -->
+        <div class="absolute inset-0 z-10">
+          <Hotspot 
+            v-for="hotspot in store.currentScene?.hotspots" 
+            :key="hotspot.id"
+            :hotspot="hotspot"
+          />
+        </div>
 
         <!-- Scene title overlay -->
         <Transition name="title-fade">
@@ -178,7 +180,7 @@ const videoA = ref(null)
 const videoB = ref(null)
 const activeVideo = reactive({ isA: true, isB: false })
 let crossfadeInProgress = false
-const CROSSFADE_THRESHOLD = 1.0 // Start crossfade when 1 second remaining
+const CROSSFADE_THRESHOLD = 3.5 // Start crossfade when 3.5 seconds remaining
 
 // Scenes that should play river sound
 const riverScenes = ['moss-steps', 'waterfall']
@@ -253,7 +255,7 @@ function onVideoTimeUpdate(event, videoId) {
     // Reset crossfade flag after transition completes
     setTimeout(() => {
       crossfadeInProgress = false
-    }, 1200)
+    }, 3700)
   }
 }
 
@@ -394,5 +396,10 @@ function restartGame() {
 .title-fade-enter-from,
 .title-fade-leave-to {
   opacity: 0;
+}
+
+/* Video crossfade transition - 3.5 seconds */
+.video-crossfade {
+  transition: opacity 3.5s ease-in-out;
 }
 </style>

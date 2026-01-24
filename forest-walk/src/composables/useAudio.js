@@ -11,13 +11,13 @@ let currentVolumeValue = 0.6
 
 // Playlist of background music tracks (exported for UI)
 export const musicTracks = [
-  { src: 'audio/Zen 2 (1).wav', name: 'Zen 2 (1)' },
-  { src: 'audio/Zen 2 (2).wav', name: 'Zen 2 (2)' },
-  { src: 'audio/Zen 2 (3).wav', name: 'Zen 2 (3)' },
-  { src: 'audio/Zen 2 (4).wav', name: 'Zen 2 (4)' },
-  { src: 'audio/Zen 2 (5).wav', name: 'Zen 2 (5)' },
-  { src: 'audio/Zen 2 (6).wav', name: 'Zen 2 (6)' },
-  { src: 'audio/Zen 2 (7).wav', name: 'Zen 2 (7)' },
+  { src: 'audio/Forest Dawn.wav', name: 'Forest Dawn' },
+  { src: 'audio/Ambient Woods.wav', name: 'Ambient Woods' },
+  { src: 'audio/Misty Path.wav', name: 'Misty Path' },
+  { src: 'audio/Quiet Grove.wav', name: 'Quiet Grove' },
+  { src: 'audio/Woodland Whisper.wav', name: 'Woodland Whisper' },
+  { src: 'audio/Gentle Canopy.wav', name: 'Gentle Canopy' },
+  { src: 'audio/Sunlit Clearing.wav', name: 'Sunlit Clearing' },
 ]
 
 // -15dB ≈ 0.178 linear volume (10^(-15/20))
