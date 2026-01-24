@@ -36,13 +36,13 @@
           </div>
         </div>
 
-        <!-- Floating particles overlay -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <!-- Snow particles overlay -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden z-5">
           <div 
-            v-for="i in 6" 
+            v-for="i in 30" 
             :key="i"
-            class="absolute w-1 h-1 bg-gold-muted/30 rounded-full"
-            :style="getParticleStyle(i)"
+            class="snowflake"
+            :style="getSnowflakeStyle(i)"
           ></div>
         </div>
 
@@ -158,21 +158,29 @@ const layerGradient = computed(() => {
   return gradients[Math.min(layer, gradients.length - 1)]
 })
 
-// Generate particle positions
-function getParticleStyle(index) {
-  const positions = [
-    { left: '20%', top: '30%', animationDelay: '0s' },
-    { left: '70%', top: '20%', animationDelay: '1s' },
-    { left: '40%', top: '60%', animationDelay: '2s' },
-    { left: '80%', top: '50%', animationDelay: '0.5s' },
-    { left: '15%', top: '70%', animationDelay: '1.5s' },
-    { left: '60%', top: '80%', animationDelay: '2.5s' },
-  ]
-  const pos = positions[index - 1] || positions[0]
+// Generate snowflake styles for falling snow effect
+function getSnowflakeStyle(index) {
+  // Random horizontal position across the screen
+  const left = Math.random() * 100
+  // Random size between 3px and 8px
+  const size = 3 + Math.random() * 5
+  // Random animation duration between 8s and 18s (slow falling)
+  const duration = 8 + Math.random() * 10
+  // Random delay so they don't all start at once
+  const delay = Math.random() * 15
+  // Random opacity between 0.3 and 0.7
+  const opacity = 0.3 + Math.random() * 0.4
+  // Random horizontal drift
+  const drift = -20 + Math.random() * 40
+
   return {
-    ...pos,
-    animation: `float ${8 + index}s ease-in-out infinite`,
-    animationDelay: pos.animationDelay
+    left: `${left}%`,
+    width: `${size}px`,
+    height: `${size}px`,
+    opacity: opacity,
+    animationDuration: `${duration}s`,
+    animationDelay: `${delay}s`,
+    '--drift': `${drift}px`
   }
 }
 
@@ -209,22 +217,30 @@ function restartGame() {
   opacity: 0;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-    opacity: 0.2;
+/* Snowflake styles */
+.snowflake {
+  position: absolute;
+  top: -10px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(200, 184, 150, 0.6) 50%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(0.5px);
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10px) translateX(0) rotate(0deg);
+    opacity: 0;
   }
-  25% {
-    transform: translateY(-20px) translateX(10px);
-    opacity: 0.4;
+  10% {
+    opacity: 1;
   }
-  50% {
-    transform: translateY(-10px) translateX(-5px);
-    opacity: 0.2;
+  90% {
+    opacity: 1;
   }
-  75% {
-    transform: translateY(-30px) translateX(5px);
-    opacity: 0.3;
+  100% {
+    transform: translateY(100vh) translateX(var(--drift, 0px)) rotate(360deg);
+    opacity: 0;
   }
 }
 
