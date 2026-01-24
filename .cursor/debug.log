@@ -1,0 +1,3 @@
+{"location":"gameStore.js:17","message":"isMuted initial value","data":{"isMuted":false},"timestamp":1769090782566,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"useAudio.js:startPlayback","message":"Starting playback","data":{"storeIsMuted":false},"timestamp":1769090782672,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"useAudio.js:afterPlay","message":"After play called","data":{"volumeSet":0.6,"isPlaying":true},"timestamp":1769090782673,"sessionId":"debug-session","hypothesisId":"H"}

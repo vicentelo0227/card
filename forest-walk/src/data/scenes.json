@@ -1,0 +1,285 @@
+{
+  "scenes": {
+    "forest-entrance": {
+      "id": "forest-entrance",
+      "title": "森林入口",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_0.jpg",
+      "layer": 0,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "hotspots": [
+        {
+          "id": "hs-to-main1",
+          "type": "direction",
+          "position": { "x": 50, "y": 70 },
+          "size": { "width": 15, "height": 15 },
+          "label": "往前走",
+          "hintText": "光從樹葉間灑落",
+          "target": "main-path-1",
+          "accessibleLabel": "往前走"
+        }
+      ]
+    },
+    "main-path-1": {
+      "id": "main-path-1",
+      "title": "林間小徑",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_2.jpg",
+      "layer": 1,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "forest-entrance",
+      "hotspots": [
+        {
+          "id": "hs-stop-1",
+          "type": "stop",
+          "position": { "x": 70, "y": 35 },
+          "size": { "width": 12, "height": 12 },
+          "label": "✦ 光的溫度",
+          "hintText": "停下來感受一下",
+          "stopPoint": "stop-light-guidance",
+          "accessibleLabel": "停留：光的溫度"
+        },
+        {
+          "id": "hs-to-main2",
+          "type": "direction",
+          "position": { "x": 50, "y": 75 },
+          "size": { "width": 15, "height": 15 },
+          "label": "繼續走",
+          "hintText": "小徑向前延伸",
+          "target": "main-path-2",
+          "accessibleLabel": "繼續走"
+        },
+        {
+          "id": "hs-to-moss-steps",
+          "type": "direction",
+          "position": { "x": 20, "y": 60 },
+          "size": { "width": 10, "height": 12 },
+          "label": "石階",
+          "hintText": "長滿青苔的石階",
+          "target": "moss-steps",
+          "accessibleLabel": "走向石階"
+        }
+      ]
+    },
+    "moss-steps": {
+      "id": "moss-steps",
+      "title": "苔蘚石階",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_3.jpg",
+      "layer": 1,
+      "isMainPath": false,
+      "unlockCondition": null,
+      "parent": "main-path-1",
+      "hotspots": [
+        {
+          "id": "hs-stop-stream",
+          "type": "stop",
+          "position": { "x": 40, "y": 50 },
+          "size": { "width": 12, "height": 12 },
+          "label": "✦ 水的呢喃",
+          "hintText": "聽見水聲",
+          "stopPoint": "stop-stream",
+          "accessibleLabel": "停留：水的呢喃"
+        }
+      ]
+    },
+    "main-path-2": {
+      "id": "main-path-2",
+      "title": "林間分岔",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_0 (1).jpg",
+      "layer": 2,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "main-path-1",
+      "hotspots": [
+        {
+          "id": "hs-to-forest-heart",
+          "type": "direction",
+          "position": { "x": 50, "y": 70 },
+          "size": { "width": 15, "height": 15 },
+          "label": "往深處走",
+          "hintText": "樹木愈發茂密",
+          "target": "forest-heart",
+          "accessibleLabel": "往深處走"
+        },
+        {
+          "id": "hs-to-bamboo",
+          "type": "direction",
+          "position": { "x": 25, "y": 55 },
+          "size": { "width": 10, "height": 12 },
+          "label": "小路",
+          "hintText": "樹葉輕輕搖曳",
+          "target": "bamboo-path",
+          "accessibleLabel": "走向小路"
+        }
+      ]
+    },
+    "bamboo-path": {
+      "id": "bamboo-path",
+      "title": "林間小路",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_3 (1).jpg",
+      "layer": 2,
+      "isMainPath": false,
+      "unlockCondition": null,
+      "parent": "main-path-2",
+      "hotspots": [
+        {
+          "id": "hs-stop-bamboo",
+          "type": "stop",
+          "position": { "x": 55, "y": 45 },
+          "size": { "width": 12, "height": 12 },
+          "label": "✦ 風的旋律",
+          "hintText": "風穿過樹林",
+          "stopPoint": "stop-bamboo",
+          "accessibleLabel": "停留：風的旋律"
+        }
+      ]
+    },
+    "forest-heart": {
+      "id": "forest-heart",
+      "title": "森林深處",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_2 (1).jpg",
+      "layer": 3,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "main-path-2",
+      "hotspots": [
+        {
+          "id": "hs-to-misty",
+          "type": "direction",
+          "position": { "x": 50, "y": 65 },
+          "size": { "width": 15, "height": 15 },
+          "label": "穿過霧氣",
+          "hintText": "前方有霧",
+          "target": "misty-woods",
+          "accessibleLabel": "穿過霧氣"
+        },
+        {
+          "id": "hs-to-waterfall",
+          "type": "direction",
+          "position": { "x": 25, "y": 50 },
+          "size": { "width": 10, "height": 12 },
+          "label": "水聲",
+          "hintText": "聽見水流的聲音",
+          "target": "waterfall",
+          "accessibleLabel": "走向水聲"
+        }
+      ]
+    },
+    "waterfall": {
+      "id": "waterfall",
+      "title": "水邊",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_1 (1).jpg",
+      "layer": 3,
+      "isMainPath": false,
+      "unlockCondition": null,
+      "parent": "forest-heart",
+      "hotspots": [
+        {
+          "id": "hs-stop-waterfall",
+          "type": "stop",
+          "position": { "x": 50, "y": 40 },
+          "size": { "width": 14, "height": 14 },
+          "label": "✦ 水霧之間",
+          "hintText": "水霧輕輕飄散",
+          "stopPoint": "stop-waterfall",
+          "accessibleLabel": "停留：水霧之間"
+        }
+      ]
+    },
+    "misty-woods": {
+      "id": "misty-woods",
+      "title": "霧中",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_3 (2).jpg",
+      "layer": 4,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "forest-heart",
+      "hotspots": [
+        {
+          "id": "hs-stop-mist",
+          "type": "stop",
+          "position": { "x": 65, "y": 40 },
+          "size": { "width": 12, "height": 12 },
+          "label": "✦ 霧中漫步",
+          "hintText": "在霧中停一會兒",
+          "stopPoint": "stop-mist",
+          "accessibleLabel": "停留：霧中漫步"
+        },
+        {
+          "id": "hs-to-light-corridor",
+          "type": "direction",
+          "position": { "x": 50, "y": 70 },
+          "size": { "width": 15, "height": 15 },
+          "label": "往光走",
+          "hintText": "遠方有光",
+          "target": "light-corridor",
+          "accessibleLabel": "往光走"
+        }
+      ]
+    },
+    "light-corridor": {
+      "id": "light-corridor",
+      "title": "光的走廊",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_0 (2).jpg",
+      "layer": 5,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "misty-woods",
+      "hotspots": [
+        {
+          "id": "hs-to-forest-end",
+          "type": "direction",
+          "position": { "x": 50, "y": 65 },
+          "size": { "width": 15, "height": 15 },
+          "label": "繼續走",
+          "hintText": "光愈來愈亮",
+          "target": "forest-end",
+          "accessibleLabel": "繼續走"
+        }
+      ]
+    },
+    "forest-end": {
+      "id": "forest-end",
+      "title": "森林的邊緣",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_3 (3).jpg",
+      "layer": 6,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "light-corridor",
+      "hotspots": [
+        {
+          "id": "hs-stop-elegy",
+          "type": "stop",
+          "position": { "x": 40, "y": 45 },
+          "size": { "width": 12, "height": 12 },
+          "label": "✦ 光的出口",
+          "hintText": "停下來看看",
+          "stopPoint": "stop-elegy",
+          "accessibleLabel": "停留：光的出口"
+        },
+        {
+          "id": "hs-to-ending",
+          "type": "direction",
+          "position": { "x": 60, "y": 70 },
+          "size": { "width": 15, "height": 15 },
+          "label": "走出去",
+          "hintText": "陽光就在前方",
+          "target": "ending",
+          "accessibleLabel": "走出去"
+        }
+      ]
+    },
+    "ending": {
+      "id": "ending",
+      "title": "陽光下",
+      "image": "images/Lucid_Origin_Cinematic_nature_photography_slowmoving_firstpers_0 (3).jpg",
+      "layer": 7,
+      "isMainPath": true,
+      "unlockCondition": null,
+      "parent": "forest-end",
+      "isEnding": true,
+      "hotspots": []
+    }
+  },
+  "startScene": "forest-entrance"
+}

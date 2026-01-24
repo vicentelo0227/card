@@ -1,0 +1,46 @@
+{
+  "stopPoints": {
+    "stop-light-guidance": {
+      "id": "stop-light-guidance",
+      "title": "光的溫度",
+      "description": "陽光穿過樹葉，在地上灑落斑駁的光影。\n\n你可以在這裡停一會兒。\n\n感受光落在肩膀上的溫度，感受此刻的呼吸。",
+      "music": "audio/Zen 2 (1).wav",
+      "duration": null
+    },
+    "stop-stream": {
+      "id": "stop-stream",
+      "title": "水的呢喃",
+      "description": "溪水輕輕流過石頭，發出細碎的聲響。\n\n水一直在流動，不急不緩。\n\n你也可以像水一樣，慢慢地，往前走。",
+      "music": "audio/Zen 2 (2).wav",
+      "duration": null
+    },
+    "stop-bamboo": {
+      "id": "stop-bamboo",
+      "title": "風的旋律",
+      "description": "風穿過樹林，樹葉輕輕搖曳。\n\n這是森林在呼吸的聲音。\n\n你也在呼吸。這樣就很好。",
+      "music": "audio/Zen 2 (3).wav",
+      "duration": null
+    },
+    "stop-waterfall": {
+      "id": "stop-waterfall",
+      "title": "水霧之間",
+      "description": "水從高處落下，濺起細細的水霧。\n\n霧氣輕輕飄散，帶來一絲涼意。\n\n站在這裡，讓水霧輕拂你的臉龐。",
+      "music": "audio/Zen 2 (4).wav",
+      "duration": null
+    },
+    "stop-mist": {
+      "id": "stop-mist",
+      "title": "霧中漫步",
+      "description": "霧氣繚繞，前方的路變得柔和。\n\n看不清遠方，但腳下的路是清晰的。\n\n一步一步，慢慢走就好。",
+      "music": "audio/Zen 2 (5).wav",
+      "duration": null
+    },
+    "stop-elegy": {
+      "id": "stop-elegy",
+      "title": "光的出口",
+      "description": "前方透進一道光。\n\n森林的盡頭，是另一片天空。\n\n你走了很遠的路。\n\n光一直都在。",
+      "music": "audio/Zen 2 (6).wav",
+      "duration": null
+    }
+  }
+}

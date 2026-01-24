@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Noto+Serif+TC:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    @apply w-full h-full overflow-hidden;
+  }
+
+  body {
+    @apply bg-forest-dark text-gold-muted font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #app {
+    @apply w-full h-full;
+  }
+}
+
+@layer components {
+  /* 場景容器 */
+  .scene-container {
+    @apply relative w-full h-full overflow-hidden;
+  }
+
+  /* 場景圖片/背景 */
+  .scene-image {
+    @apply absolute inset-0 w-full h-full object-cover;
+  }
+
+  /* Placeholder 場景背景 */
+  .scene-placeholder {
+    @apply absolute inset-0 w-full h-full flex items-center justify-center;
+    background: linear-gradient(135deg, #1a2f1a 0%, #0d1a0d 50%, #0a0a0a 100%);
+  }
+
+  .scene-placeholder::before {
+    content: '';
+    @apply absolute inset-0;
+    background: 
+      radial-gradient(ellipse at 30% 20%, rgba(200, 184, 150, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(45, 74, 53, 0.1) 0%, transparent 40%);
+  }
+
+  /* 熱區基礎樣式 */
+  .hotspot {
+    @apply absolute cursor-pointer transition-all duration-300 ease-out;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+  }
+
+  /* 方向熱區 */
+  .hotspot-direction {
+    @apply rounded-full;
+    background: radial-gradient(circle, rgba(200, 184, 150, 0.7) 0%, rgba(200, 184, 150, 0.35) 40%, transparent 65%);
+    box-shadow: 0 0 12px rgba(200, 184, 150, 0.4);
+  }
+
+  .hotspot-direction:hover {
+    transform: translate(-50%, -50%) scale(1.15);
+    background: radial-gradient(circle, rgba(200, 184, 150, 0.85) 0%, rgba(200, 184, 150, 0.45) 40%, transparent 65%);
+    box-shadow: 0 0 18px rgba(200, 184, 150, 0.6);
+  }
+
+  /* 停留點熱區 */
+  .hotspot-stop {
+    @apply rounded-lg;
+    background: radial-gradient(circle, rgba(232, 217, 184, 0.8) 0%, rgba(200, 184, 150, 0.4) 40%, transparent 65%);
+    box-shadow: 0 0 15px rgba(232, 217, 184, 0.5);
+  }
+
+  .hotspot-stop:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: radial-gradient(circle, rgba(232, 217, 184, 0.95) 0%, rgba(200, 184, 150, 0.5) 40%, transparent 65%);
+    box-shadow: 0 0 22px rgba(232, 217, 184, 0.7);
+  }
+
+  /* 熱區標籤 */
+  .hotspot-label {
+    @apply absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-sm text-gold-muted/80
+           opacity-0 transition-opacity duration-300 pointer-events-none;
+    bottom: calc(100% + 8px);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  }
+
+  .hotspot:hover .hotspot-label {
+    @apply opacity-100;
+  }
+
+  /* 指引面板 */
+  .guide-panel {
+    @apply fixed bottom-0 left-0 right-0 bg-forest-dark/95 backdrop-blur-md
+           border-t border-gold-muted/20 p-6 pb-8;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* 音樂指示器 */
+  .music-indicator {
+    @apply flex items-center gap-1;
+  }
+
+  .music-bar {
+    @apply w-1 bg-gold-muted rounded-full transition-all duration-150;
+    animation: musicBar 0.8s ease-in-out infinite;
+  }
+
+  .music-bar:nth-child(1) { animation-delay: 0s; }
+  .music-bar:nth-child(2) { animation-delay: 0.2s; }
+  .music-bar:nth-child(3) { animation-delay: 0.4s; }
+  .music-bar:nth-child(4) { animation-delay: 0.1s; }
+  .music-bar:nth-child(5) { animation-delay: 0.3s; }
+
+  @keyframes musicBar {
+    0%, 100% { height: 4px; }
+    50% { height: 16px; }
+  }
+
+  /* 按鈕樣式 */
+  .btn-primary {
+    @apply px-8 py-3 bg-transparent border border-gold-muted/50 text-gold-muted
+           rounded-none tracking-widest uppercase text-sm font-serif
+           transition-all duration-500 ease-out;
+  }
+
+  .btn-primary:hover {
+    @apply bg-gold-muted/10 border-gold-muted;
+    letter-spacing: 0.3em;
+  }
+
+  /* 返回按鈕 */
+  .back-button {
+    @apply fixed top-6 left-6 z-50 w-12 h-12 flex items-center justify-center
+           bg-forest-dark/60 backdrop-blur-sm border border-gold-muted/30 rounded-full
+           text-gold-muted/70 transition-all duration-300;
+  }
+
+  .back-button:hover {
+    @apply bg-forest-dark/80 border-gold-muted/50 text-gold-muted;
+  }
+
+  /* 場景標題 */
+  .scene-title {
+    @apply fixed top-6 left-1/2 -translate-x-1/2 z-40
+           text-gold-muted/60 text-sm tracking-[0.3em] uppercase font-serif;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  /* 靜音按鈕 */
+  .mute-button {
+    @apply fixed top-6 right-6 z-50 w-12 h-12 flex items-center justify-center
+           bg-forest-dark/60 backdrop-blur-sm border border-gold-muted/30 rounded-full
+           text-gold-muted/70 transition-all duration-300;
+  }
+
+  .mute-button:hover {
+    @apply bg-forest-dark/80 border-gold-muted/50 text-gold-muted;
+  }
+}
+
+@layer utilities {
+  .text-shadow-dark {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+}

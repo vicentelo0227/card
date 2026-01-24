@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>森林探索路線圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 40px;
+            color: #e0e0e0;
+        }
+        
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            color: #c8b896;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-dot.main { background: #4a7c59; }
+        .legend-dot.branch { background: #5c7a9c; }
+        .legend-dot.stop { background: #c8a45c; }
+        .legend-dot.secret { background: #8b5a8b; }
+        .legend-dot.end { background: #c75c5c; }
+        
+        .map-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        
+        svg {
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .node:hover rect {
+            filter: brightness(1.2);
+        }
+        
+        .node:hover text {
+            fill: #fff;
+        }
+        
+        .node rect {
+            rx: 6;
+            ry: 6;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .node.main rect { fill: #2d4a35; stroke: #4a7c59; }
+        .node.branch rect { fill: #3a4d5c; stroke: #5c7a9c; }
+        .node.stop rect { fill: #4a4030; stroke: #c8a45c; }
+        .node.secret rect { fill: #4a3a4a; stroke: #8b5a8b; }
+        .node.end rect { fill: #4a2a2a; stroke: #c75c5c; }
+        
+        .node text {
+            fill: #ccc;
+            font-size: 11px;
+            font-weight: 500;
+            transition: fill 0.3s ease;
+        }
+        
+        .node .subtitle {
+            fill: #888;
+            font-size: 9px;
+            font-weight: 400;
+        }
+        
+        .edge {
+            stroke: #444;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .edge.main-path {
+            stroke: #4a7c59;
+            stroke-width: 3;
+        }
+        
+        .edge-arrow {
+            fill: #444;
+        }
+        
+        .edge-arrow.main-path {
+            fill: #4a7c59;
+        }
+        
+        .layer-label {
+            fill: #555;
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .stats {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .stats span {
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>森林探索路線圖</h1>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot main"></div>
+            <span>主路線</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot branch"></div>
+            <span>支線</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot stop"></div>
+            <span>停留點（音樂/指引）</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot secret"></div>
+            <span>隱藏地點</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot end"></div>
+            <span>終點/出口</span>
+        </div>
+    </div>
+    
+    <div class="map-container">
+        <svg width="1400" height="1200" viewBox="0 0 1400 1200">
+            <!-- 層級標籤 -->
+            <text x="50" y="1100" class="layer-label">起點</text>
+            <text x="50" y="980" class="layer-label">第一層</text>
+            <text x="50" y="860" class="layer-label">第二層</text>
+            <text x="50" y="700" class="layer-label">第三層</text>
+            <text x="50" y="540" class="layer-label">第四層</text>
+            <text x="50" y="380" class="layer-label">第五層</text>
+            <text x="50" y="220" class="layer-label">第六層</text>
+            <text x="50" y="80" class="layer-label">終點層</text>
+            
+            <!-- ========== 連接線 ========== -->
+            
+            <!-- 起點到第一層 -->
+            <path class="edge main-path" d="M700,1070 L700,1010" marker-end="url(#arrow-main)"/>
+            
+            <!-- 第一層 主節點1 的分支 -->
+            <path class="edge main-path" d="M700,950 L700,890" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,970 L550,970" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,970 L850,970" marker-end="url(#arrow)"/>
+            
+            <!-- L1 支線延伸 -->
+            <path class="edge" d="M500,950 L500,890" marker-end="url(#arrow)"/>
+            <path class="edge" d="M450,970 L350,970" marker-end="url(#arrow)"/>
+            
+            <!-- L1-L1 往下的隱藏點 -->
+            <path class="edge" d="M300,950 L220,890" marker-end="url(#arrow)"/>
+            
+            <!-- R1 支線延伸 -->
+            <path class="edge" d="M900,950 L900,890" marker-end="url(#arrow)"/>
+            <path class="edge" d="M950,970 L1050,970" marker-end="url(#arrow)"/>
+            
+            <!-- R1-R1 往下的停留點 -->
+            <path class="edge" d="M1100,950 L1180,890" marker-end="url(#arrow)"/>
+            
+            <!-- 第二層 主節點2 的分支 -->
+            <path class="edge main-path" d="M700,830 L700,730" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,850 L550,850" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,850 L850,850" marker-end="url(#arrow)"/>
+            
+            <!-- L2 支線延伸 -->
+            <path class="edge" d="M500,830 L420,770" marker-end="url(#arrow)"/>
+            <path class="edge" d="M450,850 L350,850" marker-end="url(#arrow)"/>
+            
+            <!-- R2 支線延伸 -->
+            <path class="edge" d="M900,830 L980,770" marker-end="url(#arrow)"/>
+            <path class="edge" d="M950,850 L1050,850" marker-end="url(#arrow)"/>
+            
+            <!-- 第三層 主節點3 的分支 -->
+            <path class="edge main-path" d="M700,670 L700,570" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,690 L520,690" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,690 L880,690" marker-end="url(#arrow)"/>
+            
+            <!-- 第三層左側 - 瀑布線 -->
+            <path class="edge" d="M470,670 L470,570" marker-end="url(#arrow)"/>
+            <path class="edge" d="M420,690 L320,690" marker-end="url(#arrow)"/>
+            <path class="edge" d="M270,670 L270,610" marker-end="url(#arrow)"/>
+            
+            <!-- 第三層右側 - 岩石線 -->
+            <path class="edge" d="M930,670 L930,570" marker-end="url(#arrow)"/>
+            <path class="edge" d="M980,690 L1080,690" marker-end="url(#arrow)"/>
+            <path class="edge" d="M1130,670 L1130,610" marker-end="url(#arrow)"/>
+            
+            <!-- 第四層 主節點4 的分支 -->
+            <path class="edge main-path" d="M700,510 L700,410" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,530 L550,530" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,530 L850,530" marker-end="url(#arrow)"/>
+            
+            <!-- 第四層 左側分支 -->
+            <path class="edge" d="M500,510 L500,450" marker-end="url(#arrow)"/>
+            <path class="edge" d="M450,530 L380,530" marker-end="url(#arrow)"/>
+            
+            <!-- 第四層 右側分支 -->
+            <path class="edge" d="M900,510 L900,450" marker-end="url(#arrow)"/>
+            <path class="edge" d="M950,530 L1020,530" marker-end="url(#arrow)"/>
+            
+            <!-- 第五層 主節點5 的分支 -->
+            <path class="edge main-path" d="M700,350 L700,250" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,370 L550,370" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,370 L850,370" marker-end="url(#arrow)"/>
+            
+            <!-- 匯流到第六層 -->
+            <path class="edge" d="M500,350 L600,250" marker-end="url(#arrow)"/>
+            <path class="edge" d="M900,350 L800,250" marker-end="url(#arrow)"/>
+            
+            <!-- 第六層到終點 -->
+            <path class="edge main-path" d="M700,190 L700,110" marker-end="url(#arrow-main)"/>
+            <path class="edge" d="M650,210 L520,210" marker-end="url(#arrow)"/>
+            <path class="edge" d="M750,210 L880,210" marker-end="url(#arrow)"/>
+            
+            <!-- 隱藏路線（從 L1-L1-Secret 通往深處） -->
+            <path class="edge" d="M220,830 L220,610" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+            
+            <!-- 隱藏路線（從 R1-R1-Stop 通往深處） -->
+            <path class="edge" d="M1180,830 L1180,610" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+            
+            <!-- 箭頭定義 -->
+            <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" class="edge-arrow"/>
+                </marker>
+                <marker id="arrow-main" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" class="edge-arrow main-path"/>
+                </marker>
+            </defs>
+            
+            <!-- ========== 節點 ========== -->
+            
+            <!-- 起點 -->
+            <g class="node main" transform="translate(640, 1070)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">起點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">森林入口</text>
+            </g>
+            
+            <!-- ===== 第一層 ===== -->
+            <g class="node main" transform="translate(640, 950)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">林道起始</text>
+            </g>
+            
+            <g class="node branch" transform="translate(440, 950)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">左側小徑</text>
+            </g>
+            
+            <g class="node branch" transform="translate(240, 950)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L1-L1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">苔蘚石階</text>
+            </g>
+            
+            <g class="node secret" transform="translate(160, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L1-L1-秘境</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">隱藏洞穴</text>
+            </g>
+            
+            <g class="node stop" transform="translate(440, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L1-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 溪流之聲</text>
+            </g>
+            
+            <g class="node branch" transform="translate(840, 950)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">右側山徑</text>
+            </g>
+            
+            <g class="node branch" transform="translate(1040, 950)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R1-R1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">觀景台</text>
+            </g>
+            
+            <g class="node stop" transform="translate(1120, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R1-R1-停留</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 風的低語</text>
+            </g>
+            
+            <g class="node stop" transform="translate(840, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R1-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 鳥鳴迴響</text>
+            </g>
+            
+            <!-- ===== 第二層 ===== -->
+            <g class="node main" transform="translate(640, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 2</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">林間分岔</text>
+            </g>
+            
+            <g class="node branch" transform="translate(440, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L2</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">竹林小道</text>
+            </g>
+            
+            <g class="node stop" transform="translate(360, 710)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L2-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 竹韻</text>
+            </g>
+            
+            <g class="node branch" transform="translate(240, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L2-L1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">廢棄木屋</text>
+            </g>
+            
+            <g class="node branch" transform="translate(840, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R2</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">石板路</text>
+            </g>
+            
+            <g class="node stop" transform="translate(920, 710)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R2-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 古道迴音</text>
+            </g>
+            
+            <g class="node branch" transform="translate(1040, 830)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R2-R1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">斷橋遺跡</text>
+            </g>
+            
+            <!-- ===== 第三層 ===== -->
+            <g class="node main" transform="translate(640, 670)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 3</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">森林心臟</text>
+            </g>
+            
+            <g class="node branch" transform="translate(410, 670)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">瀑布線-入口</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">聽見水聲</text>
+            </g>
+            
+            <g class="node stop" transform="translate(410, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">瀑布</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 瀑布交響</text>
+            </g>
+            
+            <g class="node branch" transform="translate(210, 670)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">瀑布-支線</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">水濂洞</text>
+            </g>
+            
+            <g class="node secret" transform="translate(210, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">秘密花園</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">遺世之地</text>
+            </g>
+            
+            <g class="node branch" transform="translate(870, 670)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">岩石線-入口</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">巨石陣</text>
+            </g>
+            
+            <g class="node stop" transform="translate(870, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">岩石頂</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 大地脈動</text>
+            </g>
+            
+            <g class="node branch" transform="translate(1070, 670)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">岩石-支線</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">化石崖</text>
+            </g>
+            
+            <g class="node secret" transform="translate(1070, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">遠古遺跡</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">時間裂縫</text>
+            </g>
+            
+            <!-- ===== 第四層 ===== -->
+            <g class="node main" transform="translate(640, 510)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 4</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">迷霧深林</text>
+            </g>
+            
+            <g class="node branch" transform="translate(440, 510)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L4</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">螢火蟲谷</text>
+            </g>
+            
+            <g class="node stop" transform="translate(440, 390)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L4-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 星光閃爍</text>
+            </g>
+            
+            <g class="node branch" transform="translate(270, 510)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L4-L1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">蘑菇林</text>
+            </g>
+            
+            <g class="node branch" transform="translate(840, 510)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R4</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">月光草原</text>
+            </g>
+            
+            <g class="node stop" transform="translate(840, 390)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R4-停留點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 月之詠嘆</text>
+            </g>
+            
+            <g class="node branch" transform="translate(1010, 510)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R4-R1</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">老樹根</text>
+            </g>
+            
+            <!-- ===== 第五層 ===== -->
+            <g class="node main" transform="translate(640, 350)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 5</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">光之回廊</text>
+            </g>
+            
+            <g class="node branch" transform="translate(440, 350)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">L5</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">晨曦小徑</text>
+            </g>
+            
+            <g class="node branch" transform="translate(840, 350)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">R5</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">暮色長廊</text>
+            </g>
+            
+            <!-- ===== 第六層 ===== -->
+            <g class="node main" transform="translate(640, 190)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">主節點 6</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">森林盡頭</text>
+            </g>
+            
+            <g class="node stop" transform="translate(410, 190)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">最終停留</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 森林輓歌</text>
+            </g>
+            
+            <g class="node end" transform="translate(870, 190)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">另一出口</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">山之彼端</text>
+            </g>
+            
+            <!-- ===== 終點 ===== -->
+            <g class="node end" transform="translate(640, 50)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">終點</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">歸途</text>
+            </g>
+            
+            <!-- 隱藏路線終點 -->
+            <g class="node secret" transform="translate(160, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">地下湖</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 深淵之歌</text>
+            </g>
+            
+            <g class="node secret" transform="translate(1120, 550)">
+                <rect width="120" height="50" x="0" y="0"/>
+                <text x="60" y="22" text-anchor="middle">雲端觀景</text>
+                <text x="60" y="38" text-anchor="middle" class="subtitle">♪ 天際迴響</text>
+            </g>
+            
+        </svg>
+    </div>
+    
+    <div class="stats">
+        <span>總節點數：<strong>42</strong></span>
+        <span>停留點：<strong>12</strong></span>
+        <span>隱藏地點：<strong>6</strong></span>
+        <span>終點/出口：<strong>3</strong></span>
+    </div>
+</body>
+</html>
