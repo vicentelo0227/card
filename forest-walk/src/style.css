@@ -109,7 +109,7 @@
 
   /* 指引面板 */
   .guide-panel {
-    @apply fixed bottom-0 left-0 right-0 bg-forest-dark/70 backdrop-blur-md
+    @apply fixed bottom-0 left-0 right-0 z-40 bg-forest-dark/70 backdrop-blur-md
            border-t border-gold-muted/20 p-6 pb-8;
     max-height: 60vh;
     overflow-y: auto;

@@ -1,0 +1,12 @@
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"direction","id":"hs-to-main1","activeStopPoint":null},"timestamp":1769239499629,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"stop","id":"hs-stop-1","activeStopPoint":null},"timestamp":1769239501933,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"GuidePanel.vue:mousedown","message":"mousedown event fired","data":{"btnId":"closeBtn"},"timestamp":1769239510792,"sessionId":"debug-session","hypothesisId":"C,D"}
+{"location":"GuidePanel.vue:close","message":"close() called","data":{"activeStopPoint":"stop-light-guidance"},"timestamp":1769239510841,"sessionId":"debug-session","hypothesisId":"D,E"}
+{"location":"GuidePanel.vue:close:after","message":"closeStopPoint executed","data":{"activeStopPointAfter":null},"timestamp":1769239510842,"sessionId":"debug-session","hypothesisId":"E"}
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"direction","id":"hs-to-main2","activeStopPoint":null},"timestamp":1769239512725,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"direction","id":"hs-to-bamboo","activeStopPoint":null},"timestamp":1769239515192,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"stop","id":"hs-stop-bamboo","activeStopPoint":null},"timestamp":1769239519300,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"GuidePanel.vue:mousedown","message":"mousedown event fired","data":{"btnId":"closeBtn"},"timestamp":1769239522225,"sessionId":"debug-session","hypothesisId":"C,D"}
+{"location":"GuidePanel.vue:close","message":"close() called","data":{"activeStopPoint":"stop-bamboo"},"timestamp":1769239522292,"sessionId":"debug-session","hypothesisId":"D,E"}
+{"location":"GuidePanel.vue:close:after","message":"closeStopPoint executed","data":{"activeStopPointAfter":null},"timestamp":1769239522292,"sessionId":"debug-session","hypothesisId":"E"}
+{"location":"Hotspot.vue:handleClick","message":"hotspot clicked","data":{"type":"direction","id":"hs-to-moss-steps","activeStopPoint":null},"timestamp":1769239532633,"sessionId":"debug-session","hypothesisId":"B"}
