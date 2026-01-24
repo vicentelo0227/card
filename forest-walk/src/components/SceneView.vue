@@ -146,13 +146,7 @@
       </div>
     </Transition>
 
-    <!-- Loading overlay -->
-    <Transition name="fade">
-      <div 
-        v-if="store.isTransitioning"
-        class="absolute inset-0 z-30 bg-forest-dark/50 pointer-events-none"
-      ></div>
-    </Transition>
+    <!-- Loading overlay removed to prevent brightness changes during transitions -->
   </div>
 </template>
 
@@ -183,9 +177,11 @@ const riverScenes = ['moss-steps', 'waterfall']
 // Preload adjacent scenes when scene changes
 watch(() => store.currentSceneId, (sceneId, oldSceneId) => {
   if (sceneId) {
-    // Store previous image to prevent black flash during transition
-    if (oldSceneId && store.scenes[oldSceneId]?.image) {
-      previousImage.value = store.scenes[oldSceneId].image
+    // Store previous background to prevent black flash during transition
+    // Use image as fallback for video scenes (video scenes also have image property)
+    if (oldSceneId && store.scenes[oldSceneId]) {
+      const oldScene = store.scenes[oldSceneId]
+      previousImage.value = oldScene.image || null
     }
     
     imageLoaded.value = false
@@ -278,10 +274,10 @@ watch(() => store.currentScene?.video, (newVideo) => {
 })
 
 function clearPreviousImage() {
-  // Clear previous image after transition completes
+  // Clear previous image after new scene fully fades in (1s transition + buffer)
   setTimeout(() => {
     previousImage.value = null
-  }, 100)
+  }, 1200)
 }
 
 // Generate different gradients based on layer (fallback)
@@ -333,14 +329,15 @@ function restartGame() {
 </script>
 
 <style scoped>
-/* 場景轉換：新場景淡入，舊場景保持不透明避免變暗 */
+/* 場景轉換：純淡入效果，舊場景瞬間移除（由 previousImage 墊底） */
 .scene-enter-active {
-  transition: opacity 0.8s ease;
+  transition: opacity 1s ease-out;
 }
 
 .scene-leave-active {
-  transition: opacity 0.1s ease;
-  /* 快速移除，但不淡出到透明 */
+  /* 瞬間移除舊場景，previousImage 會墊底 */
+  transition: none;
+  position: absolute;
 }
 
 .scene-enter-from {
@@ -348,7 +345,6 @@ function restartGame() {
 }
 
 .scene-leave-to {
-  /* 保持不透明，由 previousImage 墊底 */
   opacity: 1;
 }
 
