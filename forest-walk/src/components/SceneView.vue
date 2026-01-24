@@ -19,19 +19,31 @@
         :key="store.currentSceneId"
         class="absolute inset-0"
       >
-        <!-- Video background (if scene has video) -->
+        <!-- Video background with crossfade loop (if scene has video) -->
         <div 
           v-if="store.currentScene?.video"
           class="absolute inset-0"
         >
+          <!-- Video A -->
           <video
+            ref="videoA"
             :src="store.currentScene.video"
-            autoplay
-            loop
             muted
             playsinline
-            class="absolute inset-0 w-full h-full object-cover"
-            @loadeddata="onImageLoaded"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            :class="{ 'opacity-0': !activeVideo.isA }"
+            @timeupdate="onVideoTimeUpdate($event, 'A')"
+            @loadeddata="onVideoALoaded"
+          />
+          <!-- Video B (for crossfade) -->
+          <video
+            ref="videoB"
+            :src="store.currentScene.video"
+            muted
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            :class="{ 'opacity-0': !activeVideo.isB }"
+            @timeupdate="onVideoTimeUpdate($event, 'B')"
           />
           <!-- Dark overlay for better hotspot visibility -->
           <div class="absolute inset-0 bg-black/15"></div>
@@ -148,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, nextTick } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import { usePreload } from '../composables/usePreload'
 import { useAudio } from '../composables/useAudio'
@@ -160,6 +172,13 @@ const { playRiverSound, stopRiverSound } = useAudio()
 const imageLoaded = ref(false)
 const showSceneTitle = ref(false)
 const previousImage = ref(null)
+
+// Video crossfade refs and state
+const videoA = ref(null)
+const videoB = ref(null)
+const activeVideo = reactive({ isA: true, isB: false })
+let crossfadeInProgress = false
+const CROSSFADE_THRESHOLD = 1.0 // Start crossfade when 1 second remaining
 
 // Scenes that should play river sound
 const riverScenes = ['moss-steps', 'waterfall']
@@ -194,6 +213,65 @@ watch(() => store.currentSceneId, (sceneId, oldSceneId) => {
 function onImageLoaded() {
   imageLoaded.value = true
 }
+
+// Video A loaded - start playing
+function onVideoALoaded() {
+  imageLoaded.value = true
+  if (videoA.value) {
+    videoA.value.play()
+    activeVideo.isA = true
+    activeVideo.isB = false
+    crossfadeInProgress = false
+  }
+}
+
+// Handle video time update for crossfade loop
+function onVideoTimeUpdate(event, videoId) {
+  const video = event.target
+  if (!video || !video.duration) return
+  
+  const timeRemaining = video.duration - video.currentTime
+  
+  // Start crossfade when approaching end
+  if (timeRemaining <= CROSSFADE_THRESHOLD && !crossfadeInProgress) {
+    crossfadeInProgress = true
+    
+    if (videoId === 'A' && videoB.value) {
+      // Switch from A to B
+      videoB.value.currentTime = 0
+      videoB.value.play()
+      activeVideo.isA = false
+      activeVideo.isB = true
+    } else if (videoId === 'B' && videoA.value) {
+      // Switch from B to A
+      videoA.value.currentTime = 0
+      videoA.value.play()
+      activeVideo.isA = true
+      activeVideo.isB = false
+    }
+    
+    // Reset crossfade flag after transition completes
+    setTimeout(() => {
+      crossfadeInProgress = false
+    }, 1200)
+  }
+}
+
+// Reset video state when scene changes
+watch(() => store.currentScene?.video, (newVideo) => {
+  if (newVideo) {
+    // Reset to video A when entering a video scene
+    nextTick(() => {
+      activeVideo.isA = true
+      activeVideo.isB = false
+      crossfadeInProgress = false
+      if (videoA.value) {
+        videoA.value.currentTime = 0
+        videoA.value.play()
+      }
+    })
+  }
+})
 
 function clearPreviousImage() {
   // Clear previous image after transition completes
