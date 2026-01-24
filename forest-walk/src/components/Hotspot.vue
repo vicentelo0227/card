@@ -32,8 +32,8 @@
     <Transition name="hint">
       <span 
         v-if="showHint && hotspot.hintText"
-        class="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-gold-muted/60 pointer-events-none"
-        style="top: calc(100% + 24px);"
+        class="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-gold-muted pointer-events-none"
+        style="top: calc(100% + 24px); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 4px 12px rgba(0, 0, 0, 0.6);"
       >
         {{ hotspot.hintText }}
       </span>

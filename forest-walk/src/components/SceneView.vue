@@ -89,7 +89,7 @@
             v-if="showSceneTitle && store.currentScene?.title && !store.currentScene?.isEnding"
             class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
           >
-            <h2 class="font-serif text-2xl md:text-4xl text-gold-muted/90 tracking-widest text-center px-8 drop-shadow-lg">
+            <h2 class="font-serif text-2xl md:text-4xl text-gold-muted tracking-widest text-center px-8" style="text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 6px 20px rgba(0, 0, 0, 0.7);">
               {{ store.currentScene.title }}
             </h2>
           </div>
