@@ -12,12 +12,13 @@
         {
           "id": "hs-to-main1",
           "type": "direction",
-          "position": { "x": 50, "y": 70 },
+          "position": { "x": 40, "y": 70 },
           "size": { "width": 15, "height": 15 },
           "label": "往前走",
           "hintText": "光從樹葉間灑落",
           "target": "main-path-1",
-          "accessibleLabel": "往前走"
+          "accessibleLabel": "往前走",
+          "enhancedGlow": true
         }
       ]
     },

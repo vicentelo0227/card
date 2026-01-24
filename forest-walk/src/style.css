@@ -62,38 +62,37 @@
   .hotspot-direction {
     @apply rounded-full;
     background: radial-gradient(circle, rgba(200, 184, 150, 0.7) 0%, rgba(200, 184, 150, 0.35) 40%, transparent 65%);
-    border: 2px solid rgba(20, 40, 20, 0.6);
-    box-shadow: 
-      0 0 12px rgba(200, 184, 150, 0.4),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 12px rgba(200, 184, 150, 0.4);
   }
 
   .hotspot-direction:hover {
     transform: translate(-50%, -50%) scale(1.15);
     background: radial-gradient(circle, rgba(200, 184, 150, 0.85) 0%, rgba(200, 184, 150, 0.45) 40%, transparent 65%);
-    border-color: rgba(20, 40, 20, 0.8);
-    box-shadow: 
-      0 0 18px rgba(200, 184, 150, 0.6),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 18px rgba(200, 184, 150, 0.6);
+  }
+
+  /* 增強光暈的方向熱區 */
+  .hotspot-direction.enhanced-glow {
+    background: radial-gradient(circle, rgba(200, 184, 150, 0.85) 0%, rgba(200, 184, 150, 0.5) 40%, transparent 65%);
+    box-shadow: 0 0 20px rgba(200, 184, 150, 0.6), 0 0 40px rgba(200, 184, 150, 0.3);
+  }
+
+  .hotspot-direction.enhanced-glow:hover {
+    background: radial-gradient(circle, rgba(200, 184, 150, 0.95) 0%, rgba(200, 184, 150, 0.6) 40%, transparent 65%);
+    box-shadow: 0 0 28px rgba(200, 184, 150, 0.8), 0 0 50px rgba(200, 184, 150, 0.4);
   }
 
   /* 停留點熱區 */
   .hotspot-stop {
     @apply rounded-lg;
     background: radial-gradient(circle, rgba(232, 217, 184, 0.8) 0%, rgba(200, 184, 150, 0.4) 40%, transparent 65%);
-    border: 2px solid rgba(20, 40, 20, 0.6);
-    box-shadow: 
-      0 0 15px rgba(232, 217, 184, 0.5),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(232, 217, 184, 0.5);
   }
 
   .hotspot-stop:hover {
     transform: translate(-50%, -50%) scale(1.1);
     background: radial-gradient(circle, rgba(232, 217, 184, 0.95) 0%, rgba(200, 184, 150, 0.5) 40%, transparent 65%);
-    border-color: rgba(20, 40, 20, 0.8);
-    box-shadow: 
-      0 0 22px rgba(232, 217, 184, 0.7),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 22px rgba(232, 217, 184, 0.7);
   }
 
   /* 熱區標籤 */

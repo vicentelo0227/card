@@ -2,7 +2,8 @@
   <button
     :class="[
       'hotspot',
-      hotspot.type === 'stop' ? 'hotspot-stop hotspot-breathe' : 'hotspot-direction hotspot-pulse'
+      hotspot.type === 'stop' ? 'hotspot-stop hotspot-breathe' : 'hotspot-direction hotspot-pulse',
+      hotspot.enhancedGlow ? 'enhanced-glow' : ''
     ]"
     :style="hotspotStyle"
     :aria-label="hotspot.accessibleLabel || hotspot.label"
