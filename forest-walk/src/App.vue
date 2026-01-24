@@ -12,6 +12,7 @@
       <BackButton />
       <SceneTitle />
       <MuteButton />
+      <MusicPlayer />
       <GuidePanel />
     </template>
   </div>
@@ -24,6 +25,7 @@ import SceneView from './components/SceneView.vue'
 import BackButton from './components/BackButton.vue'
 import SceneTitle from './components/SceneTitle.vue'
 import MuteButton from './components/MuteButton.vue'
+import MusicPlayer from './components/MusicPlayer.vue'
 import GuidePanel from './components/GuidePanel.vue'
 
 const store = useGameStore()

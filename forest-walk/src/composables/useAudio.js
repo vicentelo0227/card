@@ -6,17 +6,18 @@ import { useGameStore } from '../stores/gameStore'
 let globalMusic = null
 let riverSound = null
 let isInitialized = false
-let currentTrackIndex = 0
+let currentTrackIndexValue = 0
+let currentVolumeValue = 0.6
 
-// Playlist of background music tracks
-const musicTracks = [
-  'audio/Zen 2 (1).wav',
-  'audio/Zen 2 (2).wav',
-  'audio/Zen 2 (3).wav',
-  'audio/Zen 2 (4).wav',
-  'audio/Zen 2 (5).wav',
-  'audio/Zen 2 (6).wav',
-  'audio/Zen 2 (7).wav',
+// Playlist of background music tracks (exported for UI)
+export const musicTracks = [
+  { src: 'audio/Zen 2 (1).wav', name: 'Zen 2 (1)' },
+  { src: 'audio/Zen 2 (2).wav', name: 'Zen 2 (2)' },
+  { src: 'audio/Zen 2 (3).wav', name: 'Zen 2 (3)' },
+  { src: 'audio/Zen 2 (4).wav', name: 'Zen 2 (4)' },
+  { src: 'audio/Zen 2 (5).wav', name: 'Zen 2 (5)' },
+  { src: 'audio/Zen 2 (6).wav', name: 'Zen 2 (6)' },
+  { src: 'audio/Zen 2 (7).wav', name: 'Zen 2 (7)' },
 ]
 
 // -15dB ≈ 0.178 linear volume (10^(-15/20))
@@ -27,20 +28,23 @@ export function useAudio() {
   
   const isPlaying = ref(false)
   const isLoading = ref(false)
+  const currentTrackIndex = ref(currentTrackIndexValue)
+  const volume = ref(currentVolumeValue)
 
   // Play next track in playlist
   function playNextTrack() {
-    currentTrackIndex = (currentTrackIndex + 1) % musicTracks.length
-    console.log('[Audio] Playing next track:', musicTracks[currentTrackIndex])
+    currentTrackIndexValue = (currentTrackIndexValue + 1) % musicTracks.length
+    currentTrackIndex.value = currentTrackIndexValue
+    console.log('[Audio] Playing next track:', musicTracks[currentTrackIndexValue].name)
     
     if (globalMusic) {
       globalMusic.unload()
     }
     
     globalMusic = new Howl({
-      src: [musicTracks[currentTrackIndex]],
+      src: [musicTracks[currentTrackIndexValue].src],
       loop: false,
-      volume: store.isMuted ? 0 : 0.6,
+      volume: store.isMuted ? 0 : currentVolumeValue,
       html5: true,
       preload: true,
       onend: () => {
@@ -48,7 +52,7 @@ export function useAudio() {
         playNextTrack()
       },
       onplay: () => {
-        console.log('[Audio] Now playing:', musicTracks[currentTrackIndex])
+        console.log('[Audio] Now playing:', musicTracks[currentTrackIndexValue].name)
         isPlaying.value = true
       },
       onplayerror: (id, error) => {
@@ -62,6 +66,54 @@ export function useAudio() {
     globalMusic.play()
   }
 
+  // Play specific track by index
+  function playTrack(index) {
+    if (index < 0 || index >= musicTracks.length) return
+    
+    currentTrackIndexValue = index
+    currentTrackIndex.value = index
+    console.log('[Audio] Switching to track:', musicTracks[index].name)
+    
+    if (globalMusic) {
+      globalMusic.unload()
+    }
+    
+    globalMusic = new Howl({
+      src: [musicTracks[index].src],
+      loop: false,
+      volume: store.isMuted ? 0 : currentVolumeValue,
+      html5: true,
+      preload: true,
+      onend: () => {
+        console.log('[Audio] Track ended, playing next')
+        playNextTrack()
+      },
+      onplay: () => {
+        console.log('[Audio] Now playing:', musicTracks[index].name)
+        isPlaying.value = true
+      },
+      onplayerror: (id, error) => {
+        console.error('[Audio] Failed to play:', error)
+        globalMusic?.once('unlock', () => {
+          globalMusic?.play()
+        })
+      }
+    })
+    
+    globalMusic.play()
+  }
+
+  // Set volume (0-1)
+  function setVolume(vol) {
+    currentVolumeValue = Math.max(0, Math.min(1, vol))
+    volume.value = currentVolumeValue
+    
+    if (globalMusic && !store.isMuted) {
+      globalMusic.volume(currentVolumeValue)
+    }
+    console.log('[Audio] Volume set to:', currentVolumeValue)
+  }
+
   // Initialize and play background music (only once)
   function initBackgroundMusic() {
     if (isInitialized || globalMusic) {
@@ -73,10 +125,11 @@ export function useAudio() {
     console.log('[Audio] Initializing background music playlist')
     isLoading.value = true
     isInitialized = true
-    currentTrackIndex = 0
+    currentTrackIndexValue = 0
+    currentTrackIndex.value = 0
 
     globalMusic = new Howl({
-      src: [musicTracks[currentTrackIndex]],
+      src: [musicTracks[currentTrackIndexValue].src],
       loop: false,
       volume: 0,
       html5: true,
@@ -99,7 +152,7 @@ export function useAudio() {
         })
       },
       onplay: () => {
-        console.log('[Audio] Background music now playing:', musicTracks[currentTrackIndex])
+        console.log('[Audio] Background music now playing:', musicTracks[currentTrackIndexValue].name)
         isPlaying.value = true
       },
       onpause: () => {
@@ -117,7 +170,7 @@ export function useAudio() {
     // Start playing with volume set directly
     setTimeout(() => {
       if (globalMusic && !globalMusic.playing()) {
-        const targetVolume = store.isMuted ? 0 : 0.6
+        const targetVolume = store.isMuted ? 0 : currentVolumeValue
         console.log('[Audio] Starting playback, target volume:', targetVolume)
         
         globalMusic.volume(targetVolume)
@@ -177,7 +230,7 @@ export function useAudio() {
       if (muted) {
         globalMusic.fade(currentVolume, 0, 1000)
       } else {
-        globalMusic.fade(currentVolume, 0.6, 1000)
+        globalMusic.fade(currentVolume, currentVolumeValue, 1000)
       }
     }
     
@@ -223,10 +276,14 @@ export function useAudio() {
   return {
     isPlaying,
     isLoading,
+    currentTrackIndex,
+    volume,
     initBackgroundMusic,
     playRiverSound,
     stopRiverSound,
     setMuted,
+    setVolume,
+    playTrack,
     getIsPlaying,
     stopMusic
   }

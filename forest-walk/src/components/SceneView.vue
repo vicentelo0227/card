@@ -19,9 +19,27 @@
         :key="store.currentSceneId"
         class="absolute inset-0"
       >
-        <!-- Real image background -->
+        <!-- Video background (if scene has video) -->
         <div 
-          v-if="store.currentScene?.image"
+          v-if="store.currentScene?.video"
+          class="absolute inset-0"
+        >
+          <video
+            :src="store.currentScene.video"
+            autoplay
+            loop
+            muted
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover"
+            @loadeddata="onImageLoaded"
+          />
+          <!-- Dark overlay for better hotspot visibility -->
+          <div class="absolute inset-0 bg-black/15"></div>
+        </div>
+
+        <!-- Real image background (fallback if no video) -->
+        <div 
+          v-else-if="store.currentScene?.image"
           class="absolute inset-0"
         >
           <img 
@@ -35,7 +53,7 @@
           <div class="absolute inset-0 bg-black/15"></div>
         </div>
 
-        <!-- Fallback placeholder if no image -->
+        <!-- Fallback placeholder if no image or video -->
         <div 
           v-else
           class="scene-placeholder"
