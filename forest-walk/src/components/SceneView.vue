@@ -1,7 +1,20 @@
 <template>
   <div class="scene-container">
-    <!-- Scene background/image -->
-    <Transition name="scene" mode="out-in">
+    <!-- Previous scene image (stays visible during transition to prevent black flash) -->
+    <div 
+      v-if="previousImage"
+      class="absolute inset-0"
+    >
+      <img 
+        :src="previousImage"
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/15"></div>
+    </div>
+
+    <!-- Current scene background/image -->
+    <Transition name="scene" @after-leave="clearPreviousImage">
       <div 
         :key="store.currentSceneId"
         class="absolute inset-0"
@@ -15,7 +28,7 @@
             :src="store.currentScene.image"
             :alt="store.currentScene.title"
             class="absolute inset-0 w-full h-full object-cover"
-            @load="imageLoaded = true"
+            @load="onImageLoaded"
             @error="imageLoaded = false"
           />
           <!-- Dark overlay for better hotspot visibility -->
@@ -34,16 +47,6 @@
               :style="layerGradient"
             ></div>
           </div>
-        </div>
-
-        <!-- Snow particles overlay -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden z-5">
-          <div 
-            v-for="i in 30" 
-            :key="i"
-            class="snowflake"
-            :style="getSnowflakeStyle(i)"
-          ></div>
         </div>
 
         <!-- Hotspots -->
@@ -66,6 +69,16 @@
         </Transition>
       </div>
     </Transition>
+
+    <!-- Snow particles overlay (outside transition so it doesn't reset) -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-5">
+      <div 
+        v-for="i in 30" 
+        :key="i"
+        class="snowflake"
+        :style="getSnowflakeStyle(i)"
+      ></div>
+    </div>
 
     <!-- Ending screen -->
     <Transition name="fade">
@@ -120,16 +133,27 @@
 import { ref, computed, watch } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import { usePreload } from '../composables/usePreload'
+import { useAudio } from '../composables/useAudio'
 import Hotspot from './Hotspot.vue'
 
 const store = useGameStore()
 const { preloadAdjacentScenes } = usePreload()
+const { playRiverSound, stopRiverSound } = useAudio()
 const imageLoaded = ref(false)
 const showSceneTitle = ref(false)
+const previousImage = ref(null)
+
+// Scenes that should play river sound
+const riverScenes = ['moss-steps', 'waterfall']
 
 // Preload adjacent scenes when scene changes
-watch(() => store.currentSceneId, (sceneId) => {
+watch(() => store.currentSceneId, (sceneId, oldSceneId) => {
   if (sceneId) {
+    // Store previous image to prevent black flash during transition
+    if (oldSceneId && store.scenes[oldSceneId]?.image) {
+      previousImage.value = store.scenes[oldSceneId].image
+    }
+    
     imageLoaded.value = false
     preloadAdjacentScenes(sceneId)
     store.saveProgress()
@@ -139,8 +163,26 @@ watch(() => store.currentSceneId, (sceneId) => {
     setTimeout(() => {
       showSceneTitle.value = false
     }, 2500)
+    
+    // Handle river sound
+    if (riverScenes.includes(sceneId)) {
+      playRiverSound()
+    } else if (oldSceneId && riverScenes.includes(oldSceneId)) {
+      stopRiverSound()
+    }
   }
 }, { immediate: true })
+
+function onImageLoaded() {
+  imageLoaded.value = true
+}
+
+function clearPreviousImage() {
+  // Clear previous image after transition completes
+  setTimeout(() => {
+    previousImage.value = null
+  }, 100)
+}
 
 // Generate different gradients based on layer (fallback)
 const layerGradient = computed(() => {
@@ -166,8 +208,8 @@ function getSnowflakeStyle(index) {
   const size = 3 + Math.random() * 5
   // Random animation duration between 8s and 18s (slow falling)
   const duration = 8 + Math.random() * 10
-  // Random delay so they don't all start at once
-  const delay = Math.random() * 15
+  // Random delay so they don't all start at once (0-5s so snow appears quickly)
+  const delay = Math.random() * 5
   // Random opacity between 0.3 and 0.7
   const opacity = 0.3 + Math.random() * 0.4
   // Random horizontal drift
