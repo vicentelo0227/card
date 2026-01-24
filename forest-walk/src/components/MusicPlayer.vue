@@ -23,7 +23,7 @@
     <Transition name="panel">
       <div
         v-if="isExpanded"
-        class="absolute bottom-12 right-0 w-56 bg-forest-dark/95 backdrop-blur-md 
+        class="absolute bottom-12 right-0 w-56 bg-forest-dark/60 backdrop-blur-md 
                border border-gold-muted/30 rounded-lg rounded-br-none overflow-hidden"
       >
         <!-- Header -->

@@ -10,7 +10,6 @@
         alt=""
         class="absolute inset-0 w-full h-full object-cover"
       />
-      <div class="absolute inset-0 bg-black/15"></div>
     </div>
 
     <!-- Current scene background/image -->
@@ -24,29 +23,27 @@
           v-if="store.currentScene?.video"
           class="absolute inset-0 z-0"
         >
-          <!-- Video A -->
-          <video
-            ref="videoA"
-            :src="store.currentScene.video"
-            muted
-            playsinline
-            class="absolute inset-0 w-full h-full object-cover video-crossfade"
-            :class="{ 'opacity-0': !activeVideo.isA }"
-            @timeupdate="onVideoTimeUpdate($event, 'A')"
-            @loadeddata="onVideoALoaded"
-          />
-          <!-- Video B (for crossfade) -->
+          <!-- Video B (底層，始終不透明) -->
           <video
             ref="videoB"
             :src="store.currentScene.video"
             muted
             playsinline
-            class="absolute inset-0 w-full h-full object-cover video-crossfade"
-            :class="{ 'opacity-0': !activeVideo.isB }"
+            class="absolute inset-0 w-full h-full object-cover z-0"
             @timeupdate="onVideoTimeUpdate($event, 'B')"
+            @loadeddata="onVideoBLoaded"
           />
-          <!-- Dark overlay for better hotspot visibility -->
-          <div class="absolute inset-0 bg-black/15"></div>
+          <!-- Video A (上層，透過淡出顯示底層) -->
+          <video
+            ref="videoA"
+            :src="store.currentScene.video"
+            muted
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover z-10 video-crossfade"
+            :class="{ 'opacity-0': !activeVideo.isA }"
+            @timeupdate="onVideoTimeUpdate($event, 'A')"
+            @loadeddata="onVideoALoaded"
+          />
         </div>
 
         <!-- Real image background (fallback if no video) -->
@@ -61,8 +58,6 @@
             @load="onImageLoaded"
             @error="imageLoaded = false"
           />
-          <!-- Dark overlay for better hotspot visibility -->
-          <div class="absolute inset-0 bg-black/15"></div>
         </div>
 
         <!-- Fallback placeholder if no image or video -->
@@ -216,44 +211,51 @@ function onImageLoaded() {
   imageLoaded.value = true
 }
 
-// Video A loaded - start playing
+// Video A loaded - start playing (上層影片)
 function onVideoALoaded() {
   imageLoaded.value = true
   if (videoA.value) {
     videoA.value.play()
     activeVideo.isA = true
-    activeVideo.isB = false
     crossfadeInProgress = false
   }
 }
 
-// Handle video time update for crossfade loop
+// Video B loaded - preload but don't play yet (底層影片)
+function onVideoBLoaded() {
+  // Video B is ready as backup
+}
+
+// Handle video time update for seamless loop
+// 策略：Video A 在上層播放，接近結尾時淡出露出底層 Video B
+// Video B 從頭開始播放，A 完全淡出後，重置 A 並再次淡入
 function onVideoTimeUpdate(event, videoId) {
   const video = event.target
   if (!video || !video.duration) return
   
   const timeRemaining = video.duration - video.currentTime
   
-  // Start crossfade when approaching end
-  if (timeRemaining <= CROSSFADE_THRESHOLD && !crossfadeInProgress) {
+  // 只監聽上層 Video A 的時間
+  if (videoId === 'A' && activeVideo.isA && timeRemaining <= CROSSFADE_THRESHOLD && !crossfadeInProgress) {
     crossfadeInProgress = true
     
-    if (videoId === 'A' && videoB.value) {
-      // Switch from A to B
+    // 開始播放底層 Video B
+    if (videoB.value) {
       videoB.value.currentTime = 0
       videoB.value.play()
-      activeVideo.isA = false
-      activeVideo.isB = true
-    } else if (videoId === 'B' && videoA.value) {
-      // Switch from B to A
-      videoA.value.currentTime = 0
-      videoA.value.play()
-      activeVideo.isA = true
-      activeVideo.isB = false
     }
     
-    // Reset crossfade flag after transition completes
+    // 淡出上層 Video A（露出底層 Video B）
+    activeVideo.isA = false
+    
+    // 淡出完成後，重置 Video A 並準備下一輪
     setTimeout(() => {
+      if (videoA.value && videoB.value) {
+        // 將 Video A 重置到 Video B 當前位置，然後淡入
+        videoA.value.currentTime = videoB.value.currentTime
+        videoA.value.play()
+        activeVideo.isA = true
+      }
       crossfadeInProgress = false
     }, 3700)
   }
@@ -331,12 +333,14 @@ function restartGame() {
 </script>
 
 <style scoped>
+/* 場景轉換：新場景淡入，舊場景保持不透明避免變暗 */
 .scene-enter-active {
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
 }
 
 .scene-leave-active {
-  transition: opacity 0.4s ease;
+  transition: opacity 0.1s ease;
+  /* 快速移除，但不淡出到透明 */
 }
 
 .scene-enter-from {
@@ -344,7 +348,8 @@ function restartGame() {
 }
 
 .scene-leave-to {
-  opacity: 0;
+  /* 保持不透明，由 previousImage 墊底 */
+  opacity: 1;
 }
 
 .fade-enter-active,
