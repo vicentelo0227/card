@@ -61,38 +61,58 @@
   /* 方向熱區 */
   .hotspot-direction {
     @apply rounded-full;
-    background: radial-gradient(circle, rgba(200, 184, 150, 0.7) 0%, rgba(200, 184, 150, 0.35) 40%, transparent 65%);
-    box-shadow: 0 0 12px rgba(200, 184, 150, 0.4);
+    background: radial-gradient(circle, rgba(220, 200, 160, 0.9) 0%, rgba(200, 184, 150, 0.6) 35%, rgba(180, 165, 130, 0.25) 60%, transparent 75%);
+    border: 1.5px solid rgba(200, 184, 150, 0.5);
+    box-shadow: 
+      0 0 15px rgba(200, 184, 150, 0.5),
+      inset 0 0 8px rgba(255, 245, 220, 0.3);
   }
 
   .hotspot-direction:hover {
     transform: translate(-50%, -50%) scale(1.15);
-    background: radial-gradient(circle, rgba(200, 184, 150, 0.85) 0%, rgba(200, 184, 150, 0.45) 40%, transparent 65%);
-    box-shadow: 0 0 18px rgba(200, 184, 150, 0.6);
+    background: radial-gradient(circle, rgba(235, 215, 175, 0.95) 0%, rgba(210, 194, 160, 0.7) 35%, rgba(190, 175, 140, 0.35) 60%, transparent 75%);
+    border-color: rgba(220, 200, 160, 0.7);
+    box-shadow: 
+      0 0 22px rgba(200, 184, 150, 0.7),
+      inset 0 0 10px rgba(255, 245, 220, 0.4);
   }
 
   /* 增強光暈的方向熱區 */
   .hotspot-direction.enhanced-glow {
-    background: radial-gradient(circle, rgba(200, 184, 150, 0.85) 0%, rgba(200, 184, 150, 0.5) 40%, transparent 65%);
-    box-shadow: 0 0 20px rgba(200, 184, 150, 0.6), 0 0 40px rgba(200, 184, 150, 0.3);
+    background: radial-gradient(circle, rgba(235, 215, 175, 0.95) 0%, rgba(210, 194, 160, 0.7) 35%, rgba(190, 175, 140, 0.35) 60%, transparent 75%);
+    border: 2px solid rgba(220, 200, 160, 0.6);
+    box-shadow: 
+      0 0 25px rgba(200, 184, 150, 0.7),
+      0 0 45px rgba(200, 184, 150, 0.35),
+      inset 0 0 10px rgba(255, 245, 220, 0.4);
   }
 
   .hotspot-direction.enhanced-glow:hover {
-    background: radial-gradient(circle, rgba(200, 184, 150, 0.95) 0%, rgba(200, 184, 150, 0.6) 40%, transparent 65%);
-    box-shadow: 0 0 28px rgba(200, 184, 150, 0.8), 0 0 50px rgba(200, 184, 150, 0.4);
+    background: radial-gradient(circle, rgba(245, 225, 185, 1) 0%, rgba(220, 204, 170, 0.8) 35%, rgba(200, 185, 150, 0.45) 60%, transparent 75%);
+    border-color: rgba(235, 215, 175, 0.8);
+    box-shadow: 
+      0 0 32px rgba(200, 184, 150, 0.85),
+      0 0 55px rgba(200, 184, 150, 0.45),
+      inset 0 0 12px rgba(255, 245, 220, 0.5);
   }
 
-  /* 停留點熱區 */
+  /* 停留點熱區（探索型） */
   .hotspot-stop {
     @apply rounded-lg;
-    background: radial-gradient(circle, rgba(232, 217, 184, 0.8) 0%, rgba(200, 184, 150, 0.4) 40%, transparent 65%);
-    box-shadow: 0 0 15px rgba(232, 217, 184, 0.5);
+    background: radial-gradient(circle, rgba(245, 230, 200, 0.95) 0%, rgba(220, 200, 170, 0.65) 35%, rgba(200, 180, 150, 0.3) 60%, transparent 75%);
+    border: 1.5px solid rgba(232, 217, 184, 0.55);
+    box-shadow: 
+      0 0 18px rgba(232, 217, 184, 0.55),
+      inset 0 0 8px rgba(255, 245, 220, 0.35);
   }
 
   .hotspot-stop:hover {
     transform: translate(-50%, -50%) scale(1.1);
-    background: radial-gradient(circle, rgba(232, 217, 184, 0.95) 0%, rgba(200, 184, 150, 0.5) 40%, transparent 65%);
-    box-shadow: 0 0 22px rgba(232, 217, 184, 0.7);
+    background: radial-gradient(circle, rgba(255, 240, 210, 1) 0%, rgba(235, 215, 185, 0.75) 35%, rgba(210, 190, 160, 0.4) 60%, transparent 75%);
+    border-color: rgba(245, 230, 200, 0.75);
+    box-shadow: 
+      0 0 26px rgba(232, 217, 184, 0.75),
+      inset 0 0 10px rgba(255, 245, 220, 0.45);
   }
 
   /* 熱區標籤 */

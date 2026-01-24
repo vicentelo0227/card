@@ -20,8 +20,8 @@ export const musicTracks = [
   { src: 'audio/Sunlit Clearing.wav', name: 'Sunlit Clearing' },
 ]
 
-// -15dB ≈ 0.178 linear volume (10^(-15/20))
-const RIVER_VOLUME = 0.178
+// -10dB ≈ 0.316 linear volume (10^(-10/20))
+const RIVER_VOLUME = 0.316
 
 export function useAudio() {
   const store = useGameStore()
