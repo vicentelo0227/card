@@ -3,21 +3,21 @@
     "stop-light-guidance": {
       "id": "stop-light-guidance",
       "title": "光的溫度",
-      "description": "陽光穿過樹葉，在地上灑落斑駁的光影。\n\n你可以在這裡停一會兒。\n\n感受光落在肩膀上的溫度，感受此刻的呼吸。",
+      "description": "陽光穿過樹葉，在地上灑落斑駁的光影。\n\n可以在這裡停一會兒。\n\n感受光的溫度，感受此刻的呼吸。",
       "music": "audio/Zen 2 (1).wav",
       "duration": null
     },
     "stop-stream": {
       "id": "stop-stream",
       "title": "水的呢喃",
-      "description": "溪水輕輕流過石頭，發出細碎的聲響。\n\n水一直在流動，不急不緩。\n\n你也可以像水一樣，慢慢地，往前走。",
+      "description": "溪水輕輕流過石頭，發出細碎的聲響。\n\n水一直在流動，不急不緩。\n\n重新調整步伐，再重新前行就好。",
       "music": "audio/Zen 2 (2).wav",
       "duration": null
     },
     "stop-bamboo": {
       "id": "stop-bamboo",
       "title": "風的旋律",
-      "description": "風穿過樹林，樹葉輕輕搖曳。\n\n這是森林在呼吸的聲音。\n\n你也在呼吸。這樣就很好。",
+      "description": "風穿過樹林，樹葉輕輕搖曳。\n\n這是森林在呼吸的聲音。\n\n深呼吸，讓心靜、復原，再出發。",
       "music": "audio/Zen 2 (3).wav",
       "duration": null
     },

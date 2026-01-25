@@ -9,7 +9,6 @@
       <SceneView />
 
       <!-- UI Overlay -->
-      <BackButton />
       <SceneTitle />
       <MuteButton />
       <MusicPlayer />
@@ -22,7 +21,6 @@
 import { useGameStore } from './stores/gameStore'
 import IntroScreen from './components/IntroScreen.vue'
 import SceneView from './components/SceneView.vue'
-import BackButton from './components/BackButton.vue'
 import SceneTitle from './components/SceneTitle.vue'
 import MuteButton from './components/MuteButton.vue'
 import MusicPlayer from './components/MusicPlayer.vue'

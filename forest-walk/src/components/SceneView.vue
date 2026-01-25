@@ -97,15 +97,56 @@
       </div>
     </Transition>
 
-    <!-- Snow particles overlay (outside transition so it doesn't reset) -->
-    <div class="absolute inset-0 pointer-events-none overflow-hidden z-5">
+    <!-- Snow particles overlay with fade transition on scene change -->
+    <Transition name="particles-fade">
+      <div :key="store.currentSceneId" class="absolute inset-0 pointer-events-none overflow-hidden z-5">
+        <div 
+          v-for="i in 30" 
+          :key="i"
+          class="snowflake"
+          :style="getSnowflakeStyle(i)"
+        ></div>
+      </div>
+    </Transition>
+
+    <!-- Mist effect overlay for misty-woods scene -->
+    <Transition name="mist-fade">
       <div 
-        v-for="i in 30" 
-        :key="i"
-        class="snowflake"
-        :style="getSnowflakeStyle(i)"
-      ></div>
-    </div>
+        v-if="store.currentSceneId === 'misty-woods'"
+        class="absolute inset-0 pointer-events-none z-5 overflow-hidden"
+      >
+        <div class="mist-layer mist-layer-1"></div>
+        <div class="mist-layer mist-layer-2"></div>
+        <div class="mist-layer mist-layer-3"></div>
+      </div>
+    </Transition>
+
+    <!-- Guidance text and back button at bottom center (hidden when stop point card is shown) -->
+    <Transition name="guidance-fade">
+      <div 
+        v-if="(store.currentScene?.guidanceText || store.canGoBack) && !store.currentScene?.isEnding && !store.activeStopPoint"
+        :key="store.currentSceneId + '-guidance'"
+        class="absolute bottom-8 left-0 right-0 z-50 flex flex-col items-center pointer-events-none px-4 gap-3"
+      >
+        <!-- Back button above guidance text -->
+        <button 
+          v-if="store.canGoBack"
+          @click="store.goBack"
+          class="back-button-inline pointer-events-auto"
+          aria-label="返回上一個場景"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <!-- Guidance text -->
+        <div v-if="store.currentScene?.guidanceText" class="guidance-text-container">
+          <p class="font-serif text-base md:text-lg text-gold-muted tracking-wider text-center leading-relaxed">
+            {{ store.currentScene.guidanceText }}
+          </p>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Ending screen -->
     <Transition name="fade">
@@ -159,7 +200,7 @@ import Hotspot from './Hotspot.vue'
 
 const store = useGameStore()
 const { preloadAdjacentScenes } = usePreload()
-const { playRiverSound, stopRiverSound } = useAudio()
+const { playRiverSound, stopRiverSound, playBirdsSound, stopBirdsSound, playWaterfallSound, stopWaterfallSound, playForestWindSound, stopForestWindSound, playAmbientSound, stopAmbientSound } = useAudio()
 const imageLoaded = ref(false)
 const showSceneTitle = ref(false)
 const previousImage = ref(null)
@@ -171,17 +212,23 @@ const activeVideo = reactive({ isA: true, isB: false })
 let crossfadeInProgress = false
 const CROSSFADE_THRESHOLD = 3.5 // Start crossfade when 3.5 seconds remaining
 
-// Scenes that should play river sound
-const riverScenes = ['moss-steps', 'waterfall']
+// Scenes that should play specific ambient sounds
+const riverScenes = ['moss-steps', 'light-corridor']
+const birdsScenes = ['forest-entrance']
+const waterfallScenes = ['waterfall']
+const forestWindScenes = ['bamboo-path']
 
 // Preload adjacent scenes when scene changes
 watch(() => store.currentSceneId, (sceneId, oldSceneId) => {
   if (sceneId) {
     // Store previous background to prevent black flash during transition
-    // Use image as fallback for video scenes (video scenes also have image property)
+    // Only set previousImage for non-video scenes to avoid video->image flash
     if (oldSceneId && store.scenes[oldSceneId]) {
       const oldScene = store.scenes[oldSceneId]
-      previousImage.value = oldScene.image || null
+      // If old scene has video, don't use previousImage (video handles its own transition)
+      if (!oldScene.video) {
+        previousImage.value = oldScene.image || null
+      }
     }
     
     imageLoaded.value = false
@@ -194,11 +241,45 @@ watch(() => store.currentSceneId, (sceneId, oldSceneId) => {
       showSceneTitle.value = false
     }, 2500)
     
+    // Check if scene has specific ambient sound
+    const hasSpecificSound = birdsScenes.includes(sceneId) || 
+                             riverScenes.includes(sceneId) || 
+                             waterfallScenes.includes(sceneId) ||
+                             forestWindScenes.includes(sceneId)
+    
     // Handle river sound
     if (riverScenes.includes(sceneId)) {
       playRiverSound()
     } else if (oldSceneId && riverScenes.includes(oldSceneId)) {
       stopRiverSound()
+    }
+    
+    // Handle birds sound
+    if (birdsScenes.includes(sceneId)) {
+      playBirdsSound()
+    } else if (oldSceneId && birdsScenes.includes(oldSceneId)) {
+      stopBirdsSound()
+    }
+    
+    // Handle waterfall sound
+    if (waterfallScenes.includes(sceneId)) {
+      playWaterfallSound()
+    } else if (oldSceneId && waterfallScenes.includes(oldSceneId)) {
+      stopWaterfallSound()
+    }
+    
+    // Handle forest wind sound (for bamboo-path)
+    if (forestWindScenes.includes(sceneId)) {
+      playForestWindSound()
+    } else if (oldSceneId && forestWindScenes.includes(oldSceneId)) {
+      stopForestWindSound()
+    }
+    
+    // Handle default ambient sound (for scenes without specific sounds)
+    if (!hasSpecificSound) {
+      playAmbientSound()
+    } else {
+      stopAmbientSound()
     }
   }
 }, { immediate: true })
@@ -402,5 +483,50 @@ function restartGame() {
 /* Video crossfade transition - 3.5 seconds */
 .video-crossfade {
   transition: opacity 3.5s ease-in-out;
+}
+
+/* Particles fade transition */
+.particles-fade-enter-active,
+.particles-fade-leave-active {
+  transition: opacity 0.8s ease;
+}
+
+.particles-fade-enter-from,
+.particles-fade-leave-to {
+  opacity: 0;
+}
+
+/* Guidance text styles */
+.guidance-text-container {
+  background: linear-gradient(180deg, rgba(13, 26, 13, 0.35) 0%, rgba(13, 26, 13, 0.45) 100%);
+  backdrop-filter: blur(4px);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(200, 184, 150, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  max-width: 400px;
+}
+
+.guidance-text-container p {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Guidance text fade transition */
+.guidance-fade-enter-active {
+  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+.guidance-fade-leave-active {
+  transition: opacity 0.6s ease-in, transform 0.6s ease-in;
+}
+
+.guidance-fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.guidance-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
 }
 </style>

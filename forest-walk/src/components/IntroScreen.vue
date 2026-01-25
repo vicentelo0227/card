@@ -35,7 +35,7 @@
       </p>
 
       <!-- Continue button (if has saved progress) -->
-      <div v-if="hasSavedProgress" class="flex flex-col gap-4 animate-fade-in" style="animation-delay: 0.9s;">
+      <div v-if="hasSavedProgress" class="flex flex-col items-center gap-4 animate-fade-in" style="animation-delay: 0.9s;">
         <button 
           @click="continueGame"
           class="btn-primary"

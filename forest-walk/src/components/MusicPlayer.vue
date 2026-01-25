@@ -26,9 +26,28 @@
         class="absolute bottom-12 right-0 w-56 bg-forest-dark/40 backdrop-blur-sm 
                border border-gold-muted/30 rounded-lg rounded-br-none overflow-hidden"
       >
-        <!-- Header -->
+        <!-- Header with Play/Pause -->
         <div class="px-4 py-3 border-b border-gold-muted/20">
-          <p class="text-gold-muted/50 text-xs tracking-wider mb-1">正在播放</p>
+          <div class="flex items-center justify-between mb-1">
+            <p class="text-gold-muted/50 text-xs tracking-wider">正在播放</p>
+            <button
+              @click="onTogglePlayPause"
+              class="w-7 h-7 flex items-center justify-center rounded-full 
+                     bg-gold-muted/10 text-gold-muted/70 
+                     hover:bg-gold-muted/20 hover:text-gold-muted transition-colors"
+              :title="isPlaying ? '暫停' : '播放'"
+            >
+              <!-- Pause icon -->
+              <svg v-if="isPlaying" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+              <!-- Play icon -->
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
           <p class="text-gold-muted text-sm font-medium truncate">
             {{ currentTrackName }}
           </p>
@@ -82,15 +101,17 @@ import { ref, computed } from 'vue'
 import { useAudio, musicTracks } from '../composables/useAudio'
 
 const { 
-  isPlaying, 
+  isPlaying: isPlayingRef, 
   currentTrackIndex: currentTrackIndexRef, 
   volume: volumeRef,
   playTrack, 
-  setVolume 
+  setVolume,
+  togglePlayPause
 } = useAudio()
 
 const isExpanded = ref(false)
 
+const isPlaying = computed(() => isPlayingRef.value)
 const currentTrackIndex = computed(() => currentTrackIndexRef.value)
 const volume = computed(() => volumeRef.value)
 const currentTrackName = computed(() => musicTracks[currentTrackIndex.value]?.name || 'Loading...')
@@ -102,6 +123,10 @@ function selectTrack(index) {
 function onVolumeChange(event) {
   const value = parseInt(event.target.value) / 100
   setVolume(value)
+}
+
+function onTogglePlayPause() {
+  togglePlayPause()
 }
 </script>
 
