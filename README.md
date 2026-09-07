@@ -2,7 +2,9 @@
 
 一個沉浸式的互動網站，讓人在瀏覽器裡慢慢走一段森林。沒有分數、沒有計時、沒有目的地——只有影像、聲音，和願意停下來的片刻。
 
-**▶ 線上體驗：https://vicentelo0227.github.io/card/**（建議戴上耳機）
+### ▶ [線上體驗 vicentelo0227.github.io/card](https://vicentelo0227.github.io/card/)
+
+（建議戴上耳機）
 
 ![森林漫步開場畫面](docs/screenshots/hero.jpg)
 
